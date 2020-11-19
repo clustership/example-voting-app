@@ -1,0 +1,16 @@
+FROM registry.redhat.io/ubi8/dotnet-21
+
+#USER 1001
+#env APP_ROOT /opt/app-root
+#WORKDIR ${APP_ROOT}
+
+# ADD src/Worker . ${APP_ROOT}/src/Worker
+ADD src/Worker .
+
+RUN dotnet restore -v minimal . \
+    && dotnet publish -c Release -o "${DOTNET_APP_PATH}" "./" \
+    && fix-permissions /opt/app-root
+
+WORKDIR /opt/app-root
+CMD dotnet ./app/Worker.dll
+#CMD /bin/sh

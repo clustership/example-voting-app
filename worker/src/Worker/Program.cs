@@ -19,8 +19,9 @@ namespace Worker
                 var postgresServer = Environment.GetEnvironmentVariable("POSTGRES_SERVER");
                 var postgresUsername = Environment.GetEnvironmentVariable("POSTGRES_USERNAME");
                 var postgresPassword = Environment.GetEnvironmentVariable("POSTGRES_PASSWORD");
+                var postgresDatabase = Environment.GetEnvironmentVariable("POSTGRES_DATABASE");
                 var redisHost = Environment.GetEnvironmentVariable("REDIS_HOST");
-                var pgsql = OpenDbConnection($"Server={postgresServer};Username={postgresUsername};Password={postgresPassword};");
+                var pgsql = OpenDbConnection($"Server={postgresServer};Username={postgresUsername};Password={postgresPassword};Database={postgresDatabase};");
                 var redisConn = OpenRedisConnection(redisHost);
                 var redis = redisConn.GetDatabase();
 
@@ -82,14 +83,16 @@ namespace Worker
                     connection.Open();
                     break;
                 }
-                catch (SocketException)
+                catch (SocketException exception)
                 {
                     Console.Error.WriteLine("Waiting for db");
+                    Console.Error.Write(exception);
                     Thread.Sleep(1000);
                 }
-                catch (DbException)
+                catch (DbException exception)
                 {
                     Console.Error.WriteLine("Waiting for db");
+                    Console.Error.Write(exception);
                     Thread.Sleep(1000);
                 }
             }

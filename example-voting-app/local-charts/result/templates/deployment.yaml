@@ -1,4 +1,4 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ template "fullname" . }}
@@ -10,6 +10,9 @@ metadata:
     version: {{ .Values.image.tag | quote }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "fullname" . }}
   template:
     metadata:
       labels:
@@ -19,14 +22,12 @@ spec:
         heritage: {{ .Release.Service  | quote }}
         version: {{ .Values.imageTag | quote }}
     spec:
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecret }}
       containers:
         - name: result
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{default "Always" .Values.image.pullPolicy}}
           ports:
-            - containerPort: 80
+            - containerPort: 8008
               name: http
           env:
           - name: POSTGRES_SERVER

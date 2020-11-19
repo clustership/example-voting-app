@@ -1,9 +1,9 @@
-# Default values for worker.
+# Default values for result-app.
 # This is a YAML-formatted file.
 # Declare name/value pairs to be passed into your templates.
 # name: value
 image: 
-  repository: quay.io/xymox/worker
+  repository: quay.io/xymox/result
   tag: latest
   pullSecret: cfcr
 
@@ -11,8 +11,6 @@ postgresql:
   postgresUser: postgres
   postgresPassword: postgres
 
-redis:
-  host: redis
-  usePassword: false
-
 replicaCount: 1
+
+istio: true

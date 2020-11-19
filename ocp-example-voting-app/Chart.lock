@@ -1,0 +1,6 @@
+dependencies:
+- name: postgresql
+  repository: https://clustership.github.io/helm-charts/
+  version: 0.1.0
+digest: sha256:74d7d6f5b81c200a9398a422d7eecb65d29bfb15e4e5f4749ff0c8c3fb425532
+generated: "2020-11-17T19:23:40.022928+01:00"

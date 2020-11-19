@@ -1,0 +1,19 @@
+FROM registry.redhat.io/ubi8/nodejs-12
+
+#RUN mkdir -p /app
+WORKDIR ${APP_ROOT}
+
+RUN npm config set unsafe-perm true && npm install -g nodemon
+RUN npm config set registry https://registry.npmjs.org
+COPY package.json ${APP_ROOT}/package.json
+RUN npm install \
+ && npm ls \
+ && npm cache clean --force
+
+# && mv ${APP_ROOT}/node_modules /node_modules
+COPY . ${APP_ROOT}
+
+ENV PORT 8008
+EXPOSE 8008
+
+CMD ["node", "server.js"]

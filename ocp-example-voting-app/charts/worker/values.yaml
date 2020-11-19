@@ -12,7 +12,8 @@ postgresql:
   postgresPassword: postgres
 
 redis:
-  host: redis
   usePassword: false
 
 replicaCount: 1
+
+istio: true

@@ -15,23 +15,38 @@ spec:
       app: {{ template "fullname" . }}
   template:
     metadata:
+      {{- with .Values.istio }}
+      annotations:
+        sidecar.istio.io/inject: "true"
+      {{- end }}
       labels:
         app: {{ template "fullname" . }}
         chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
         release: {{ .Release.Name  | quote }}
         heritage: {{ .Release.Service  | quote }}
-        version: {{ .Values.imageTag | quote }}
+        version: {{ .Values.image.tag | quote }}
     spec:
       containers:
         - name: {{ template "fullname" . }}
           image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
           imagePullPolicy: {{default "Always" .Values.pullPolicy}}
           env:
+          - name: POSTGRES_USERNAME
+            valueFrom:
+              secretKeyRef:
+                key: database-user
+                name: postgresql
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                key: database-password
+                name: postgresql
+          - name: POSTGRES_DATABASE
+            valueFrom:
+              secretKeyRef:
+                key: database-name
+                name: postgresql
           - name: POSTGRES_SERVER
             value: {{ .Values.postgresql.server | default (printf "%s-postgresql" ( .Release.Name )) | quote }}
-          - name: POSTGRES_USERNAME
-            value: {{ .Values.postgresql.username | default "postgres" | quote }}
-          - name: POSTGRES_PASSWORD
-            value: {{ .Values.postgresql.password | default "postgres" | quote }}
           - name: REDIS_HOST
             value: {{ .Values.redis.host | default (printf "%s-redis" ( .Release.Name )) | quote }}
